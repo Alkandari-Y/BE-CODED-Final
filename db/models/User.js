@@ -11,7 +11,7 @@ const UserSchema = Schema(
       type: String,
       required: true,
     },
-    profile:   {
+    profile: {
       name: {
         type: String,
         default: 'New User',

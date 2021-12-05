@@ -2,7 +2,7 @@ const express = require("express");
 const {
   register,
   login,
-  // updateProfile,
+  updateProfile,
   getProfileList,
 } = require("./controllers");
 const upload = require('../../middleware/multer')
@@ -18,12 +18,12 @@ router.post(
 );
 
 // Updating Page
-// router.put(
-//   "/updateprofile",
-//   passport.authenticate("jwt", { session: false }),
-//   upload.single("image"),
-//   updateProfile
-// );
+router.put(
+  "/updateprofile",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  updateProfile
+);
 
 router.get(
   "/getprofiles",
