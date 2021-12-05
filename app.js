@@ -24,10 +24,8 @@ passport.use(JWTStrategy);
 
 //Route Imports
 const userRoutes = require("./apis/users/routes");
-const profileRoutes = require("./apis/profiles/routes");
 
 //Routes
-app.use("/api/profiles", profileRoutes);
 app.use("/api/", userRoutes);
 
 app.use(errorHandler);

@@ -1,4 +1,3 @@
-const Profile = require("../../db/models/Profile");
 const User = require("../../db/models/User");
 //Import Utils
 const { createHash } = require("../../utils/createHash");
@@ -21,23 +20,23 @@ exports.login = async (req, res, next) => {
   res.status(200).json({ token });
 };
 
-exports.updateProfile = async (req, res, next) => {
-  try {
-    if (req.file) {
-      req.body.image = `/media/${req.file.filename}`;
-      req.body.image = req.body.image.replace("\\", "/");
-    }
-    await User.findByIdAndUpdate(req.user, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    const foundProfile = await User.findOne({ user: req.user._id })
-      .select('-password').populate()
-    return res.status(201).json(foundProfile);
-  } catch (error) {
-    return next(error);
-  }
-};
+// exports.updateProfile = async (req, res, next) => {
+//   try {
+//     if (req.file) {
+//       req.body.image = `/media/${req.file.filename}`;
+//       req.body.image = req.body.image.replace("\\", "/");
+//     }
+//     await User.findByIdAndUpdate(req.user, req.body, {
+//       new: true,
+//       runValidators: true,
+//     });
+//     const foundProfile = await User.findOne({ user: req.user._id })
+//       .select('-password').populate()
+//     return res.status(201).json(foundProfile);
+//   } catch (error) {
+//     return next(error);
+//   }
+// };
 
 exports.getProfileList = async (req, res, next) => {
   try {

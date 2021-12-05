@@ -16,6 +16,11 @@ const GroupSchema = Schema(
             type: Schema.Types.ObjectId,
             ref: 'Polls'
             }
+        ],
+        chat: [{
+            message: String,
+            date: Date
+            }
         ]
     },
   { timestamps: true }
