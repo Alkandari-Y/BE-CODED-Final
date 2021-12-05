@@ -11,6 +11,11 @@ const UserSchema = Schema(
       type: String,
       required: true,
     },
+    SMSToken: String,
+    isValidated: {
+      type: Boolean,
+      default: false
+    },
     profile: {
       name: {
         type: String,

@@ -1,15 +1,38 @@
 const User = require("../../db/models/User");
 //Import Utils
 const { createHash } = require("../../utils/createHash");
+const { createRandomToken } = require("../../utils/createRandomToken");
 const { generateToken } = require("../../utils/createToken");
+const { sendTwilioSMSMessage } = require("../../utils/sendTwilioMessage");
 
 exports.register = async (req, res, next) => {
   try {
     req.body.password = await createHash(req.body.password);
+    req.body.SMSToken = createRandomToken();
 
     const newUser = await User.create(req.body);
     const token = generateToken(newUser);
+    await sendTwilioSMSMessage(newUser.phoneNumber, newUser.SMSToken );
     res.status(201).json({ token });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.twilioVerificationCode = async (req, res, next) => {
+  try {
+    if (req.body.SMSToken !== req.user.SMSToken) {
+      return next({
+        status: 401,
+        message: "Please ensure you've entered the SMS token correctly"
+      })
+    };
+    const newUser = await User.findByIdAndUpdate({ _id: req.user._id }, { isValidated: true });
+    
+    const validatedUser = await User.findOne({ _id: req.user._id })
+      .select('-password').populate();
+    
+    return res.status(200).json(validatedUser);
   } catch (error) {
     next(error);
   }

@@ -2,6 +2,7 @@ const express = require("express");
 const {
   register,
   login,
+  twilioVerificationCode,
   updateProfile,
   getProfileList,
 } = require("./controllers");
@@ -12,12 +13,17 @@ const passport = require("passport");
 router.post("/register", register);
 
 router.post(
+  "/verifyTwilio",
+  passport.authenticate("jwt", { session: false }),
+  twilioVerificationCode
+);
+
+router.post(
   "/login",
   passport.authenticate("local", { session: false }),
   login
 );
 
-// Updating Page
 router.put(
   "/updateprofile",
   passport.authenticate("jwt", { session: false }),
