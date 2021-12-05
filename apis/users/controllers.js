@@ -32,7 +32,8 @@ exports.twilioVerificationCode = async (req, res, next) => {
     const validatedUser = await User.findOne({ _id: req.user._id })
       .select('-password').populate();
     
-    return res.status(200).json(validatedUser);
+    const token = generateToken(validatedUser);
+    return res.status(200).json({token});
   } catch (error) {
     next(error);
   }
@@ -69,7 +70,7 @@ exports.getProfileList = async (req, res, next) => {
     const profiles = await User.find().select('-password').populate();
     return res.status(200).json(profiles);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
