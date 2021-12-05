@@ -1,4 +1,4 @@
-const { Schema, model, Types } = require("mongoose");
+const { Schema, model } = require("mongoose");
 
 const UserSchema = Schema(
   {
@@ -11,9 +11,20 @@ const UserSchema = Schema(
       type: String,
       required: true,
     },
-    profile: {
-      type: Schema.Types.ObjectId,
-      ref: 'Profile'
+    profile:   {
+      name: {
+        type: String,
+        default: 'New User',
+        required: true,
+      },
+      image: {
+        type: String,
+        default: "/media/defaultUserImage.jpg",
+      },
+      status: {
+        type: String,
+      },
+      groups: [{ type: Schema.Types.ObjectId, ref: "Groups" }],
     },
   },
   { timestamps: true }
