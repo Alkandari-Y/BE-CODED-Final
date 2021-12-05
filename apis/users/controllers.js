@@ -10,8 +10,6 @@ exports.register = async (req, res, next) => {
 
     const newUser = await User.create(req.body);
     const token = generateToken(newUser);
-    const userProfile = await Profile.create({ user: newUser._id });
-    await newUser.updateOne({ profile: userProfile._id });
     res.status(201).json({ token });
   } catch (error) {
     next(error);
@@ -22,3 +20,57 @@ exports.login = async (req, res, next) => {
   const token = generateToken(req.user);
   res.status(200).json({ token });
 };
+
+exports.updateProfile = async (req, res, next) => {
+  try {
+    if (req.file) {
+      req.body.image = `/media/${req.file.filename}`;
+      req.body.image = req.body.image.replace("\\", "/");
+    }
+    await User.findByIdAndUpdate(req.user, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    const foundProfile = await User.findOne({ user: req.user._id })
+      .select('-password').populate()
+    return res.status(201).json(foundProfile);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+exports.getProfileList = async (req, res, next) => {
+  try {
+    const profiles = await User.find().select('-password').populate();
+    return res.status(200).json(profiles);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+////////////////////////////////////////////////////////
+// exports.findUserProfileById = async (profileId, next) => {
+//   try {
+//     const foundProfile = await Profile.findById(profileId);
+//     return foundProfile;
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+// exports.returnNewUserProfile = async (req, res, next) => {
+//   try {
+//     const foundProfile = await Profile.findOne({ user: req.user._id }).populate(
+//       { path: "user", select: "username" }
+//     );
+//     res.status(200).json(foundProfile);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+//Get Profiles List
+
+
+// Editing Profile
+
