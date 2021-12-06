@@ -33,7 +33,6 @@ router.put(
 
 router.get(
   "/getprofiles",
-  passport.authenticate("jwt", { session: false }),
   getProfileList);
 
 module.exports = router;
