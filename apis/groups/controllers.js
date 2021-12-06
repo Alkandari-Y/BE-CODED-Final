@@ -1,4 +1,5 @@
 const Group = require("../../db/models/Groups");
+const User = require("../../db/models/User");
 
 // Fetch one group
 exports.fetchGroupById = async (groupId, next) => {
@@ -10,9 +11,11 @@ exports.fetchGroupById = async (groupId, next) => {
   }
 };
 
-// YOUSEF: Fetch all groups the user(s) is in
+// Fetch all groups the user(s) is in
 exports.fetchUserGroups = async (req, res, next) => {
   try {
+    const groups = await Group.find();
+    return res.json(groups);
   } catch (error) {
     next(error);
   }
@@ -77,5 +80,20 @@ exports.deleteGroup = async (req, res, next) => {
   }
 };
 
-// Add members to group
-exports.addMembersToGroup = async (req, res, next) => {};
+// Add users to group as members
+exports.addMembersToGroup = async (req, res, next) => {
+  try {
+    if (!req.user._id.equals(req.group.owner._id)) {
+      return next({
+        status: 401,
+      });
+    }
+    const newMember = await User.findOne({ phoneNumber: req.body.phoneNumber });
+    const updatedGroup = await Group.findByIdAndUpdate(req.params.groupId, {
+      $push: { members: newMember._id },
+    });
+    return res.json(updatedGroup);
+  } catch (error) {
+    next(error);
+  }
+};

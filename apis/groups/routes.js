@@ -9,6 +9,8 @@ const {
   createGroup,
   updateGroup,
   deleteGroup,
+  fetchUserGroups,
+  addMembersToGroup,
 } = require("./controllers");
 
 //Routers
@@ -21,6 +23,8 @@ router.param("groupId", async (req, res, next, groupId) => {
     next({ status: 404, message: "Groups not found" });
   }
 });
+
+router.get("/", fetchUserGroups);
 
 router.post(
   "/",
@@ -40,6 +44,12 @@ router.delete(
   "/:groupId",
   passport.authenticate("jwt", { session: false }),
   deleteGroup
+);
+
+router.put(
+  "/:groupId/members",
+  passport.authenticate("jwt", { session: false }),
+  addMembersToGroup
 );
 
 module.exports = router;
