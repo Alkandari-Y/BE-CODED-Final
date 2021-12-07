@@ -16,6 +16,8 @@ exports.fetchGroupById = async (groupId, next) => {
 exports.fetchUserGroups = async (req, res, next) => {
   try {
     const groups = await Group.find();
+    //check for bug 
+    // await groups.populate({path: ""})
     return res.json(groups);
   } catch (error) {
     next(error);
