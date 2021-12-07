@@ -5,7 +5,7 @@ const { fromAuthHeaderAsBearerToken } = require("passport-jwt").ExtractJwt;
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("../db/models/User");
 
-
+//name change, options, callback function
 exports.localStrategy = new LocalStrategy(async (username, password, done) => {
   try {
     const user = await User.findOne({ phoneNumber: username });
