@@ -1,5 +1,6 @@
-const Group = require("../../db/models/Groups");
+const Group = require("../../db/models/Group");
 const User = require("../../db/models/User");
+const Poll = require('../../db/models/Poll')
 
 // Fetch one group
 exports.fetchGroupById = async (groupId, next) => {
@@ -97,3 +98,19 @@ exports.addMembersToGroup = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.addMoviePoll = async (req, res, next) => {
+  try {
+    req.body.owner = req.user._id;
+    req.body.group = req.group._id
+    const newPoll = await Poll.create(req.body)
+    
+    await Group.findByIdAndUpdate(req.group._id, {
+      $push: {polls: newPoll._id}
+    })
+
+    res.status(201).json(newPoll);
+  } catch (error) {
+    next(error)
+  }
+}

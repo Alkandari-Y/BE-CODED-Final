@@ -11,6 +11,7 @@ const {
   deleteGroup,
   fetchUserGroups,
   addMembersToGroup,
+  addMoviePoll,
 } = require("./controllers");
 
 //Routers
@@ -50,6 +51,12 @@ router.put(
   "/:groupId/members",
   passport.authenticate("jwt", { session: false }),
   addMembersToGroup
+);
+
+router.post(
+  "/:groupId/createmoviepoll",
+  passport.authenticate("jwt", { session: false }),
+  addMoviePoll
 );
 
 module.exports = router;
