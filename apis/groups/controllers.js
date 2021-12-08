@@ -1,6 +1,7 @@
 const Group = require("../../db/models/Group");
 const User = require("../../db/models/User");
-const Poll = require('../../db/models/Poll')
+const Poll = require('../../db/models/Poll');
+const Message = require("../../db/models/Message");
 
 // Fetch one group
 exports.fetchGroupById = async (groupId, next) => {
@@ -15,7 +16,7 @@ exports.fetchGroupById = async (groupId, next) => {
 // Fetch all groups the user(s) is in
 exports.fetchUserGroups = async (req, res, next) => {
   try {
-    const groups = await Group.find().populate('polls');
+    const groups = await Group.find().populate('polls').populate('chat');
     //check for bug 
     // await groups
     return res.json(groups);
@@ -108,11 +109,30 @@ exports.addMoviePoll = async (req, res, next) => {
     const newPoll = await Poll.create(req.body)
     
     await Group.findByIdAndUpdate(req.group._id, {
-      $push: {polls: newPoll._id}
+      $push: { polls: newPoll._id }
     })
 
     res.status(201).json(newPoll);
   } catch (error) {
     next(error)
   }
-}
+};
+
+exports.addChat = async (req, res, next) => {
+  try {
+    req.body.date = Date.now();
+    req.body.sentFrom = req.user._id;
+
+    const newMessage = await Message.create(req.body)
+
+    const updatedGroup = await Group.findByIdAndUpdate(
+      req.group._id,
+      { $push: { chat: newMessage } },
+      { new: true, runValidators: true }
+    ).populate('chat');
+
+    res.status(201).json(newMessage)
+  } catch (error) {
+    next(error)
+  }
+};
