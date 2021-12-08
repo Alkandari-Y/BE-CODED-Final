@@ -23,6 +23,10 @@ const GroupSchema = Schema(
       {
         message: String,
         date: Date,
+        contentType: {
+          type: String,
+          default: 'chat',
+        }
       },
     ],
     image: {
