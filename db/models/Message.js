@@ -7,7 +7,6 @@ const MessageSchema = Schema(
         type: Schema.Types.ObjectId,
         ref: "User"
     },
-    date: Date,
     contentType: {
         type: String,
         default: 'chat',

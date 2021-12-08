@@ -12,7 +12,7 @@ exports.register = async (req, res, next) => {
 
     const newUser = await User.create(req.body);
     const token = generateToken(newUser);
-    await sendTwilioSMSMessage(newUser.phoneNumber, newUser.SMSToken );
+    // await sendTwilioSMSMessage(newUser.phoneNumber, newUser.SMSToken );
     res.status(201).json({ token });
   } catch (error) {
     next(error);
