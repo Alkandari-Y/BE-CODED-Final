@@ -16,7 +16,21 @@ exports.fetchGroupById = async (groupId, next) => {
 // Fetch all groups the user(s) is in
 exports.fetchUserGroups = async (req, res, next) => {
   try {
-    const groups = await Group.find().populate('polls').populate('chat');
+    const groups = await Group.find().populate('polls').populate('chat')
+    //   .populate({
+    //   path: 'polls',
+    //   options: {
+    //     // limit: 2,
+    //     sort: { createdAt: -1 }
+    //   }
+    // })
+    //   .populate({
+    //     path: 'chat',
+    //     options: {
+    //       // limit: 2,
+    //       sort: { createdAt: -1 }
+    //     }
+    // });
     //check for bug 
     // await groups
     return res.json(groups);
