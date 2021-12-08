@@ -16,7 +16,7 @@ const GroupSchema = Schema(
     polls: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Polls",
+        ref: "Poll",
       },
     ],
     chat: [
