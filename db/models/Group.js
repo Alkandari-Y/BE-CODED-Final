@@ -21,12 +21,8 @@ const GroupSchema = Schema(
     ],
     chat: [
       {
-        message: String,
-        date: Date,
-        contentType: {
-          type: String,
-          default: 'chat',
-        }
+        type: Schema.Types.ObjectId,
+        ref: "Message",
       },
     ],
     image: {
