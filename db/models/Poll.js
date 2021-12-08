@@ -18,6 +18,12 @@ const PollSchema = Schema(
             type: String,
             required: true,
             },
+        contentType: {
+            type: {
+                type: String,
+                default: 'poll',
+            }
+        },
         votes: [
                 {
                     user: {
