@@ -29,7 +29,6 @@ const UserSchema = Schema(
       status: {
         type: String,
       },
-      groups: [{ type: Schema.Types.ObjectId, ref: "Groups" }],
     },
   },
   { timestamps: true }
