@@ -60,6 +60,19 @@ io.on("connection", (socket) => {
         console.log('current array', users)
     });
 
+    socket.on('join-group', (payload) => {
+        console.log('user joined group', socket.id)
+    })
+
+    socket.on('group-message', (payload) => {
+        console.log(payload);
+        users.forEach(user => {
+            console.log(`sent message`)
+            io.to(user.socketId).emit('new-message', (payload))
+        })
+        console.log(`end of transmission! message`)
+    })
+
     socket.on("disconnect", () => {
         console.log('user disconnected', socket.id)
         users.filter(user => socket.id === user.socketid)
