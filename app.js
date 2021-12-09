@@ -42,26 +42,33 @@ const io = new Server(server, {
     },
 })
 
-const users = new Object();
-const rooms = new Map();
+const users = []
 
 io.on("connection", (socket) => {
-    console.log('user connected', socket.id);
-//read js Maps
-    
-    socket.on('authUser', (user) => {
-        let sockets = []
-        console.log('authuser', user);
-
-        sockets.push(users);
-        console.log(users)
-
-
-    })
+    socket.on('authUser', (payload) => {
+        // console.log('authuser', payload, 'socket id: ', socket.id);
+        if (payload) {
+            const foundUser = users.find(user => user._id === payload._id);
+            if (!foundUser) {
+                users.push({ _id: payload._id, socketId: socket.id, room: null });
+            } else if (foundUser && payload._id) {
+                foundUser.socketId === socket.id
+            }
+        } else {
+            users.filter(user => user.socketId === socket.id)
+        }
+        console.log('current array', users)
+    });
 
     socket.on("disconnect", () => {
         console.log('user disconnected', socket.id)
-    })
+        users.filter(user => socket.id === user.socketid)
+
+        console.log('disconnect array', users)
+        
+    });
+
+
 })
 
 const PORT = process.env.PORT || 8080;
