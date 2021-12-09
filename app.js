@@ -42,9 +42,22 @@ const io = new Server(server, {
     },
 })
 
+const users = new Object();
+const rooms = new Map();
+
 io.on("connection", (socket) => {
     console.log('user connected', socket.id);
 //read js Maps
+    
+    socket.on('authUser', (user) => {
+        let sockets = []
+        console.log('authuser', user);
+
+        sockets.push(users);
+        console.log(users)
+
+
+    })
 
     socket.on("disconnect", () => {
         console.log('user disconnected', socket.id)

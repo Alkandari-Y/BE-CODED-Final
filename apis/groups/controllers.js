@@ -134,17 +134,12 @@ exports.addMoviePoll = async (req, res, next) => {
 
 exports.addChat = async (req, res, next) => {
   try {
-    req.body.date = Date.now();
-    req.body.sentFrom = req.user._id;
-
     const newMessage = await Message.create(req.body)
-
     const updatedGroup = await Group.findByIdAndUpdate(
       req.group._id,
-      { $push: { chat: newMessage } },
+      { $push: { chat: newMessage._id } },
       { new: true, runValidators: true }
     ).populate('chat');
-
     res.status(201).json(newMessage)
   } catch (error) {
     next(error)
