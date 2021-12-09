@@ -106,11 +106,18 @@ exports.addMembersToGroup = async (req, res, next) => {
         status: 401,
       });
     }
+
     const newMember = await User.findOne({ phoneNumber: req.body.phoneNumber });
-    const updatedGroup = await Group.findByIdAndUpdate(req.params.groupId, {
-      $push: { members: newMember._id },
-    });
-    return res.json(updatedGroup);
+
+    if (req.group.members.includes(req.body.phoneNumber)) {
+      const updatedGroup = await Group.findByIdAndUpdate(req.params.groupId, {
+        $push: { members: newMember._id }}, { new: true, runValidators: true }
+      );
+      return res.json(updatedGroup);
+    } else {
+      next({status: 500, message: 'Member already exits in the group'})
+    }
+
   } catch (error) {
     next(error);
   }
