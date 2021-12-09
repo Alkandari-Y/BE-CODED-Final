@@ -109,7 +109,9 @@ exports.addMembersToGroup = async (req, res, next) => {
 
     const newMember = await User.findOne({ phoneNumber: req.body.phoneNumber });
 
-    if (req.group.members.includes(req.body.phoneNumber)) {
+    const findNumber = req.group.members.includes(newMember._id);
+
+    if (!findNumber) {
       const updatedGroup = await Group.findByIdAndUpdate(req.params.groupId, {
         $push: { members: newMember._id }}, { new: true, runValidators: true }
       );
