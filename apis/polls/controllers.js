@@ -20,6 +20,7 @@ exports.submitVote = async (req, res, next) => {
       },
       { new: true, runValidators: true }
     );
+    // REVIEW: If you're not using newVote, no need to use findByIdAndUpdate, you can directly use the update function on req.poll
 
     let upVoteCount;
 
@@ -36,7 +37,8 @@ exports.submitVote = async (req, res, next) => {
         { new: true, runValidators: true }
       );
     }
-
+    // REVIEW: You already have votes, why recalculate >:(
+    // VIRTUAL FIELDS that calculate the up and down votes, wallah they're amazing
     return res.json(upVoteCount);
   } catch (error) {
     next(error);

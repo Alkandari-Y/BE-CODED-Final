@@ -1,6 +1,6 @@
 const Group = require("../../db/models/Group");
 const User = require("../../db/models/User");
-const Poll = require('../../db/models/Poll');
+const Poll = require("../../db/models/Poll");
 const Message = require("../../db/models/Message");
 
 // Fetch one group
@@ -16,7 +16,7 @@ exports.fetchGroupById = async (groupId, next) => {
 // Fetch all groups the user(s) is in
 exports.fetchUserGroups = async (req, res, next) => {
   try {
-    const groups = await Group.find().populate('polls').populate('chat')
+    const groups = await Group.find().populate("polls").populate("chat");
     //   .populate({
     //   path: 'polls',
     //   options: {
@@ -31,7 +31,7 @@ exports.fetchUserGroups = async (req, res, next) => {
     //       sort: { createdAt: -1 }
     //     }
     // });
-    //check for bug 
+    //check for bug
     // await groups
     return res.json(groups);
   } catch (error) {
@@ -47,8 +47,8 @@ exports.createGroup = async (req, res, next) => {
       req.body.image = req.body.image.replace("\\", "/");
     }
     req.body.owner = req.user._id;
+    // REVIEW: You can pass all members here, add their IDs in the req.body
     req.body.members = [req.user._id];
-
     const newGroup = await Group.create(req.body);
 
     res.status(201).json(newGroup);
@@ -106,20 +106,23 @@ exports.addMembersToGroup = async (req, res, next) => {
         status: 401,
       });
     }
-
+    // REVIEW: Isn't it easier to do this in the frontend since you are fetchign all profiles? Just send an array of their IDs in the body of the request
     const newMember = await User.findOne({ phoneNumber: req.body.phoneNumber });
 
     const findNumber = req.group.members.includes(newMember._id);
 
     if (!findNumber) {
-      const updatedGroup = await Group.findByIdAndUpdate(req.params.groupId, {
-        $push: { members: newMember._id }}, { new: true, runValidators: true }
+      const updatedGroup = await Group.findByIdAndUpdate(
+        req.params.groupId,
+        {
+          $push: { members: newMember._id },
+        },
+        { new: true, runValidators: true }
       );
       return res.json(updatedGroup);
     } else {
-      next({status: 500, message: 'Member already exits in the group'})
+      next({ status: 500, message: "Member already exits in the group" });
     }
-
   } catch (error) {
     next(error);
   }
@@ -128,29 +131,30 @@ exports.addMembersToGroup = async (req, res, next) => {
 exports.addMoviePoll = async (req, res, next) => {
   try {
     req.body.owner = req.user._id;
-    req.body.group = req.group._id
-    const newPoll = await Poll.create(req.body)
-    
+    req.body.group = req.group._id;
+    const newPoll = await Poll.create(req.body);
+
     await Group.findByIdAndUpdate(req.group._id, {
-      $push: { polls: newPoll._id }
-    })
+      $push: { polls: newPoll._id },
+    });
 
     res.status(201).json(newPoll);
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 exports.addChat = async (req, res, next) => {
   try {
-    const newMessage = await Message.create(req.body)
+    const newMessage = await Message.create(req.body);
+    // REVIEW: Again, if you're not using updatedGroup don't use findByIdAndUpdate
     const updatedGroup = await Group.findByIdAndUpdate(
       req.group._id,
       { $push: { chat: newMessage._id } },
       { new: true, runValidators: true }
-    ).populate('chat');
-    res.status(201).json(newMessage)
+    ).populate("chat");
+    res.status(201).json(newMessage);
   } catch (error) {
-    next(error)
+    next(error);
   }
 };

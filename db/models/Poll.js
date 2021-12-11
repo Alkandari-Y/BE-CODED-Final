@@ -31,11 +31,13 @@ const PollSchema = Schema(
         vote: {
           type: String,
           enum: {
+            // REVIEW: If it's just yes or no, why not boolean? or maybe add ممتنع عن التصويت
             values: ["yes", "no"],
           },
         },
       },
     ],
+    // REVIEW: Since you have the votes field, and those two fields are actually calculated from them, the correct approach is for them to be virtual fields 3shan they  don't be saved into the db
     yesVotes: Number,
     noVotes: Number,
     expiration: {

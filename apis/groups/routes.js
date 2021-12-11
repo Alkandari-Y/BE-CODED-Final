@@ -53,13 +53,14 @@ router.put(
   passport.authenticate("jwt", { session: false }),
   addMembersToGroup
 );
-
+// REVIEW: Bad naming, should be /:groupId/polls
 router.post(
   "/:groupId/createmoviepoll",
   passport.authenticate("jwt", { session: false }),
   addMoviePoll
 );
 
+// REVIEW: Bad naming, should be /:groupId/chats
 router.post(
   "/:groupId/addChat",
   passport.authenticate("jwt", { session: false }),

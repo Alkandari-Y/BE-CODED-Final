@@ -6,7 +6,7 @@ const {
   updateProfile,
   getProfileList,
 } = require("./controllers");
-const upload = require('../../middleware/multer')
+const upload = require("../../middleware/multer");
 const router = express.Router();
 const passport = require("passport");
 
@@ -24,6 +24,8 @@ router.post(
   login
 );
 
+// REVIEW: bad naming, we dont put verbs in path names
+// should be /profiles
 router.put(
   "/updateprofile",
   passport.authenticate("jwt", { session: false }),
@@ -31,8 +33,7 @@ router.put(
   updateProfile
 );
 
-router.get(
-  "/getprofiles",
-  getProfileList);
+// REVIEW: path should /profiles
+router.get("/getprofiles", getProfileList);
 
 module.exports = router;
