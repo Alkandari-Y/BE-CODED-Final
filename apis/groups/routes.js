@@ -12,7 +12,7 @@ const {
   fetchUserGroups,
   addMembersToGroup,
   addMoviePoll,
-  addChat
+  addChat,
 } = require("./controllers");
 
 //Routers
@@ -64,6 +64,6 @@ router.post(
   "/:groupId/addChat",
   passport.authenticate("jwt", { session: false }),
   addChat
-)
+);
 
 module.exports = router;
