@@ -72,9 +72,12 @@ io.on("connection", (socket) => {
 
   socket.on("group-message", (payload) => {
     console.log(payload);
-    users.forEach((user) => {
+    const recipients = users.filter(
+      (user) => user._id !== payload.response.sentFrom
+    );
+    recipients.forEach((recipient) => {
       console.log(`sent message`);
-      io.to(user.socketId).emit("new-message", payload);
+      io.to(recipient.socketId).emit("new-message", payload);
     });
     console.log(`end of transmission! message`);
   });
