@@ -6,7 +6,7 @@ const {
   updateProfile,
   getProfileList,
 } = require("./controllers");
-const upload = require('../../middleware/multer')
+const upload = require("../../middleware/multer");
 const router = express.Router();
 const passport = require("passport");
 
@@ -25,14 +25,12 @@ router.post(
 );
 
 router.put(
-  "/updateprofile",
+  "/profiles",
   passport.authenticate("jwt", { session: false }),
   upload.single("image"),
   updateProfile
 );
 
-router.get(
-  "/getprofiles",
-  getProfileList);
+router.get("/profiles", getProfileList);
 
 module.exports = router;

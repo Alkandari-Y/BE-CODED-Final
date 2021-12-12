@@ -55,13 +55,13 @@ router.put(
 );
 
 router.post(
-  "/:groupId/createmoviepoll",
+  "/:groupId/polls",
   passport.authenticate("jwt", { session: false }),
   addMoviePoll
 );
 
 router.post(
-  "/:groupId/addChat",
+  "/:groupId/chats",
   passport.authenticate("jwt", { session: false }),
   addChat
 );
