@@ -113,11 +113,20 @@ io.on("connection", (socket) => {
     });
   });
 
+  //create poll
+  socket.on("create-poll", (data) => {
+    console.log(data);
+    const recipients = users.filter((user) => user._id !== data.owner);
+    recipients.forEach((recipient) => {
+      io.to(recipient.socketId).emit("recieve-poll", data);
+      console.log("recipients BE:", recipient.socketId);
+    });
+  });
+
   //delete-group
   //leave-group
   //edit-profile
   //edit-group
-  //create poll
   //poll-vote
 
   socket.on("disconnect", () => {
