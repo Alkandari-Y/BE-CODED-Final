@@ -49,15 +49,19 @@ const users = [];
 io.on("connection", (socket) => {
   socket.on("authUser", (payload) => {
     // console.log('authuser', payload, 'socket id: ', socket.id);
+    console.log(payload);
     if (payload) {
       const foundUser = users.find((user) => user._id === payload._id);
-      if (!foundUser) {
+      const userSocketExists = users.find(
+        (user) => socket.id === user.socketId
+      );
+      if (!foundUser && !userSocketExists) {
         users.push({ _id: payload._id, socketId: socket.id, room: null });
-      } else if (foundUser && payload._id) {
+      } else if (foundUser && !userSocketExists) {
         foundUser.socketId === socket.id;
+      } else if (!foundUser && userSocketExists) {
+        userSocketExists._id === payload._id;
       }
-    } else {
-      users.filter((user) => user.socketId === socket.id);
     }
     console.log("current array", users);
   });
