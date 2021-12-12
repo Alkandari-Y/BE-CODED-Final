@@ -24,16 +24,20 @@ exports.twilioVerificationCode = async (req, res, next) => {
     if (req.body.SMSToken !== req.user.SMSToken) {
       return next({
         status: 401,
-        message: "Please ensure you've entered the SMS token correctly"
-      })
-    };
-    const newUser = await User.findByIdAndUpdate({ _id: req.user._id }, { isValidated: true });
-    
+        message: "Please ensure you've entered the SMS token correctly",
+      });
+    }
+    const newUser = await User.findByIdAndUpdate(
+      { _id: req.user._id },
+      { isValidated: true }
+    );
+
     const validatedUser = await User.findOne({ _id: req.user._id })
-      .select('-password').populate();
-    
+      .select("-password")
+      .populate();
+
     const token = generateToken(validatedUser);
-    return res.status(200).json({token});
+    return res.status(200).json({ token });
   } catch (error) {
     next(error);
   }
@@ -51,14 +55,19 @@ exports.updateProfile = async (req, res, next) => {
       req.body.image = req.body.image.replace("\\", "/");
     }
 
-    await User.findByIdAndUpdate(req.user._id, {$set: {'profile': req.body}}, {
-      new: true,
-      runValidators: true,
-    });
+    await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: { profile: req.body } },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     const foundProfile = await User.findOne({ _id: req.user._id })
-      .select('-password').populate();
-    
+      .select("-password")
+      .populate();
+
     return res.status(201).json(foundProfile);
   } catch (error) {
     return next(error);
@@ -67,10 +76,21 @@ exports.updateProfile = async (req, res, next) => {
 
 exports.getProfileList = async (req, res, next) => {
   try {
-    const profiles = await User.find().select('-password').populate();
+    const profiles = await User.find().select("-password").populate();
     return res.status(200).json(profiles);
   } catch (error) {
     next(error);
   }
 };
 
+exports.returnNewUserProfile = async (req, res, next) => {
+  try {
+    const profile = await User.findOne({ _id: req.user._id })
+      .select("-password")
+      .populate();
+    console.log(profile);
+    return res.status(200).json(profile);
+  } catch (error) {
+    next(error);
+  }
+};
