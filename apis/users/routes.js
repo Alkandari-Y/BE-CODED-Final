@@ -5,6 +5,7 @@ const {
   twilioVerificationCode,
   updateProfile,
   getProfileList,
+  returnNewUserProfile,
 } = require("./controllers");
 const upload = require("../../middleware/multer");
 const router = express.Router();
@@ -32,5 +33,11 @@ router.put(
 );
 
 router.get("/profiles", getProfileList);
+
+router.get(
+  "/newprofile",
+  passport.authenticate("jwt", { session: false }),
+  returnNewUserProfile
+);
 
 module.exports = router;
