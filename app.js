@@ -47,8 +47,11 @@ const io = new Server(server, {
 const users = [];
 
 io.on("connection", (socket) => {
+  console.log("New User Connected: ", socket.id);
+  console.log("\n\n\n\n\n\n\n");
+
+  //Creating a list of user and merging/linking socket.id and user._id
   socket.on("authUser", (payload) => {
-    // console.log('authuser', payload, 'socket id: ', socket.id);
     console.log(payload);
     if (payload) {
       const foundUser = users.find((user) => user._id === payload._id);
@@ -63,24 +66,59 @@ io.on("connection", (socket) => {
         userSocketExists._id === payload._id;
       }
     }
-    console.log("current array", users);
+    console.log("current array of active sockets", users);
   });
 
-  socket.on("join-group", (payload) => {
-    console.log("user joined group", socket.id);
-  });
+  //Leave this for uncommented for later (icebox)
+  // socket.on("join-group", (payload) => {
+  //   console.log("user joined group", socket.id);
+  // });
 
+  //send group message
   socket.on("group-message", (payload) => {
     console.log(payload);
     const recipients = users.filter(
       (user) => user._id !== payload.response.sentFrom
     );
     recipients.forEach((recipient) => {
-      console.log(`sent message`);
       io.to(recipient.socketId).emit("new-message", payload);
     });
     console.log(`end of transmission! message`);
   });
+
+  //create new group
+  socket.on("new-group", (payload) => {
+    console.log(payload);
+
+    const recipients = users.filter((user) => user._id !== payload.owner);
+
+    recipients.forEach((recipient) => {
+      io.to(recipient.socketId).emit("group-list-update", payload);
+      console.log(`Sent updated group list to: ${socket.id}`);
+    });
+  });
+
+  //add-user-to-group
+  socket.on("adding-new-member", (payload) => {
+    console.log(payload);
+
+    // const recipients = users.filter((user) => user._id !== payload.owner);
+    const recipients = users.filter(
+      (user) => payload.members.includes(user._id) && user._id !== payload.owner
+    );
+    console.log("deliver to: ", recipients);
+    recipients.forEach((recipient) => {
+      io.to(recipient.socketId).emit("receive-new-member", payload);
+      console.log(`Sent updated group and member list to: ${socket.id}`);
+    });
+  });
+
+  //delete-group
+  //leave-group
+  //edit-profile
+  //edit-group
+  //create poll
+  //poll-vote
 
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
