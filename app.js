@@ -51,6 +51,7 @@ io.on("connection", (socket) => {
   console.log("New User Connected: ", socket.id);
   console.log("\n\n");
   activeSockets.push(socket.id);
+  console.log("User(s) Connected: ", activeSockets);
 
   //Creating a list of user and merging/linking socket.id and user._id ---- CANCELED FUNCTION
   // socket.on("authUser", (payload) => {
@@ -102,6 +103,30 @@ io.on("connection", (socket) => {
     });
   });
 
+  //delete-group
+  socket.on("delete-group", (data) => {
+    const recipients = activeSockets.filter((user) => user !== socket.id);
+    recipients.forEach((recipient) => {
+      io.to(recipient).emit("recieve-deleted-group", data);
+    });
+  });
+
+  //edit-group
+  socket.on("edit-group", (data) => {
+    const recipients = activeSockets.filter((user) => user !== socket.id);
+    recipients.forEach((recipient) => {
+      io.to(recipient).emit("recieve-edited-group", data);
+    });
+  });
+
+  //leave-group
+  socket.on("leave-group", (data) => {
+    const recipients = activeSockets.filter((user) => user !== socket.id);
+    recipients.forEach((recipient) => {
+      io.to(recipient).emit("recieve-left-group", data);
+    });
+  });
+
   //create poll
   socket.on("create-poll", (data) => {
     const recipients = activeSockets.filter((user) => user !== socket.id);
@@ -121,10 +146,16 @@ io.on("connection", (socket) => {
     });
   });
 
-  //delete-group
-  //leave-group
   //edit-profile
-  //edit-group
+  socket.on("update-profile", (data) => {
+    const recipients = activeSockets.filter((user) => user !== socket.id);
+    recipients.forEach((recipient) => {
+      io.to(recipient).emit("recieve-updated-profile", data);
+      console.log("recipients BE:", recipient);
+    });
+  });
+
+  //register-user .... MAYBE NOT?!
 
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
