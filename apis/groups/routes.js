@@ -11,6 +11,7 @@ const {
   deleteGroup,
   fetchUserGroups,
   addMembersToGroup,
+  leaveGroup,
   addMoviePoll,
   addChat,
 } = require("./controllers");
@@ -52,6 +53,12 @@ router.put(
   "/:groupId/members",
   passport.authenticate("jwt", { session: false }),
   addMembersToGroup
+);
+
+router.put(
+  "/:groupId/leave",
+  passport.authenticate("jwt", { session: false }),
+  leaveGroup
 );
 
 router.post(
