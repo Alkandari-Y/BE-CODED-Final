@@ -79,80 +79,48 @@ io.on("connection", (socket) => {
 
   //send group message
   socket.on("group-message", (payload) => {
-    const recipients = activeSockets.filter((user) => user !== socket.id);
-    recipients.forEach((recipient) => {
-      io.to(recipient).emit("new-message", payload);
-    });
-    console.log(`end of transmission! message`);
+    socket.broadcast.emit("new-message", payload);
   });
 
   //create new group
   socket.on("new-group", (payload) => {
-    const recipients = activeSockets.filter((user) => user !== socket.id);
-    recipients.forEach((recipient) => {
-      io.to(recipient).emit("group-list-update", payload);
-    });
+    socket.broadcast.emit("group-list-update", payload);
   });
 
   //add-user-to-group
   socket.on("adding-new-member", (payload) => {
-    // const recipients = users.filter((user) => user._id !== payload.owner);
-    const recipients = activeSockets.filter((user) => user !== socket.id);
-    recipients.forEach((recipient) => {
-      io.to(recipient).emit("receive-new-member", payload);
-    });
+    socket.broadcast.emit("receive-new-member", payload);
   });
 
-  //delete-group
+  //TBD - delete-group
   socket.on("delete-group", (data) => {
-    const recipients = activeSockets.filter((user) => user !== socket.id);
-    recipients.forEach((recipient) => {
-      io.to(recipient).emit("recieve-deleted-group", data);
-    });
+    socket.broadcast.emit("recieve-deleted-group", data);
+    console.log("data deleted BE", data);
   });
 
   //edit-group
   socket.on("edit-group", (data) => {
-    const recipients = activeSockets.filter((user) => user !== socket.id);
-    recipients.forEach((recipient) => {
-      io.to(recipient).emit("recieve-edited-group", data);
-    });
+    socket.broadcast.emit("recieve-edited-group", data);
   });
 
-  //leave-group
+  //TBD - leave-group
   socket.on("leave-group", (data) => {
-    const recipients = activeSockets.filter((user) => user !== socket.id);
-    recipients.forEach((recipient) => {
-      io.to(recipient).emit("recieve-left-group", data);
-    });
+    socket.broadcast.emit("recieve-left-group", data);
   });
 
   //create poll
   socket.on("create-poll", (data) => {
-    const recipients = activeSockets.filter((user) => user !== socket.id);
-    recipients.forEach((recipient) => {
-      io.to(recipient).emit("recieve-poll", data);
-    });
+    socket.broadcast.emit("recieve-poll", data);
   });
 
   //poll-vote
   socket.on("submit-poll-vote", (data) => {
-    // const recipients = users.filter((user) => user.socketId !== socket.id);
-    // recipients.forEach((recipient) => {
-    activeSockets.forEach((socket) => {
-      io.to(socket).emit("receive-poll-vote", data);
-      console.log("data in BE:", data);
-      console.log("recipients BE:", socket);
-    });
+    socket.broadcast.emit("receive-poll-vote", data);
   });
 
   //edit-profile
   socket.on("update-profile", (data) => {
-    const recipients = activeSockets.filter((user) => user !== socket.id);
-    recipients.forEach((recipient) => {
-      io.to(recipient).emit("recieve-updated-profile", data);
-      console.log("recipients BE:", recipient);
-    });
+    socket.broadcast.emit("recieve-updated-profile", data);
   });
 
   //register-user .... MAYBE NOT?!
