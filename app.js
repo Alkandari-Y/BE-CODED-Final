@@ -44,30 +44,32 @@ const io = new Server(server, {
   },
 });
 
-const users = [];
+// const users = [];
+const activeSockets = [];
 
 io.on("connection", (socket) => {
   console.log("New User Connected: ", socket.id);
-  console.log("\n\n\n\n\n\n\n");
+  console.log("\n\n");
+  activeSockets.push(socket.id);
 
-  //Creating a list of user and merging/linking socket.id and user._id
-  socket.on("authUser", (payload) => {
-    console.log(payload);
-    if (payload) {
-      const foundUser = users.find((user) => user._id === payload._id);
-      const userSocketExists = users.find(
-        (user) => socket.id === user.socketId
-      );
-      if (!foundUser && !userSocketExists) {
-        users.push({ _id: payload._id, socketId: socket.id, room: null });
-      } else if (foundUser && !userSocketExists) {
-        foundUser.socketId === socket.id;
-      } else if (!foundUser && userSocketExists) {
-        userSocketExists._id === payload._id;
-      }
-    }
-    console.log("current array of active sockets", users);
-  });
+  //Creating a list of user and merging/linking socket.id and user._id ---- CANCELED FUNCTION
+  // socket.on("authUser", (payload) => {
+  //   console.log(payload);
+  //   if (payload) {
+  //     const foundUser = users.find((user) => user._id === payload._id);
+  //     const userSocketExists = users.find(
+  //       (user) => socket.id === user.socketId
+  //     );
+  //     if (!foundUser && !userSocketExists) {
+  //       users.push({ _id: payload._id, socketId: socket.id, room: null });
+  //     } else if (foundUser && !userSocketExists) {
+  //       foundUser.socketId === socket.id;
+  //     } else if (!foundUser && userSocketExists) {
+  //       userSocketExists._id === payload._id;
+  //     }
+  //   }
+  //   console.log("current array of active sockets", users);
+  // });
 
   //Leave this for uncommented for later (icebox)
   // socket.on("join-group", (payload) => {
@@ -76,60 +78,46 @@ io.on("connection", (socket) => {
 
   //send group message
   socket.on("group-message", (payload) => {
-    console.log(payload);
-    const recipients = users.filter(
-      (user) => user._id !== payload.response.sentFrom
-    );
+    const recipients = activeSockets.filter((user) => user !== socket.id);
     recipients.forEach((recipient) => {
-      io.to(recipient.socketId).emit("new-message", payload);
+      io.to(recipient).emit("new-message", payload);
     });
     console.log(`end of transmission! message`);
   });
 
   //create new group
   socket.on("new-group", (payload) => {
-    console.log(payload);
-
-    const recipients = users.filter((user) => user._id !== payload.owner);
-
+    const recipients = activeSockets.filter((user) => user !== socket.id);
     recipients.forEach((recipient) => {
-      io.to(recipient.socketId).emit("group-list-update", payload);
-      console.log(`Sent updated group list to: ${socket.id}`);
+      io.to(recipient).emit("group-list-update", payload);
     });
   });
 
   //add-user-to-group
   socket.on("adding-new-member", (payload) => {
-    console.log(payload);
-
     // const recipients = users.filter((user) => user._id !== payload.owner);
-    const recipients = users.filter(
-      (user) => payload.members.includes(user._id) && user._id !== payload.owner
-    );
-    console.log("deliver to: ", recipients);
+    const recipients = activeSockets.filter((user) => user !== socket.id);
     recipients.forEach((recipient) => {
-      io.to(recipient.socketId).emit("receive-new-member", payload);
-      console.log(`Sent updated group and member list to: ${socket.id}`);
+      io.to(recipient).emit("receive-new-member", payload);
     });
   });
 
   //create poll
   socket.on("create-poll", (data) => {
-    console.log(data);
-    const recipients = users.filter((user) => user._id !== data.owner);
+    const recipients = activeSockets.filter((user) => user !== socket.id);
     recipients.forEach((recipient) => {
-      io.to(recipient.socketId).emit("recieve-poll", data);
-      console.log("recipients BE:", recipient.socketId);
+      io.to(recipient).emit("recieve-poll", data);
     });
   });
 
   //poll-vote
   socket.on("submit-poll-vote", (data) => {
-    const recipients = users.filter((user) => user.socketId !== socket.id);
-    recipients.forEach((recipient) => {
-      io.to(recipient.socketId).emit("recieve-poll-vote", data);
+    // const recipients = users.filter((user) => user.socketId !== socket.id);
+    // recipients.forEach((recipient) => {
+    activeSockets.forEach((socket) => {
+      io.to(socket).emit("receive-poll-vote", data);
       console.log("data in BE:", data);
-      console.log("recipients BE:", recipient.socketId);
+      console.log("recipients BE:", socket);
     });
   });
 
@@ -140,9 +128,6 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
-    users.filter((user) => socket.id === user.socketId);
-
-    console.log("disconnect array", users);
   });
 });
 
