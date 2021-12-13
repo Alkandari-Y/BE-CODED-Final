@@ -123,11 +123,20 @@ io.on("connection", (socket) => {
     });
   });
 
+  //poll-vote
+  socket.on("submit-poll-vote", (data) => {
+    const recipients = users.filter((user) => user.socketId !== socket.id);
+    recipients.forEach((recipient) => {
+      io.to(recipient.socketId).emit("recieve-poll-vote", data);
+      console.log("data in BE:", data);
+      console.log("recipients BE:", recipient.socketId);
+    });
+  });
+
   //delete-group
   //leave-group
   //edit-profile
   //edit-group
-  //poll-vote
 
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
