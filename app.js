@@ -96,7 +96,6 @@ io.on("connection", (socket) => {
 	socket.on("delete-group", (data) => {
 		socket.broadcast.emit("navigate-home");
 		socket.broadcast.emit("recieve-deleted-group", data);
-		console.log("data deleted BE", data);
 	});
 
 	//edit-group
@@ -121,7 +120,6 @@ io.on("connection", (socket) => {
 
 	// Push-new-user-profile
 	socket.on("pushNewUserProfile", (data) => {
-		console.log("pushNewUserProfile data", data);
 		socket.broadcast.emit("recieve-new-user-profile", data);
 	});
 

@@ -92,32 +92,24 @@ exports.deleteGroup = async (req, res, next) => {
 
 // Add users to group as members
 exports.addMembersToGroup = async (req, res, next) => {
-	try {
-		if (!req.user._id.equals(req.group.owner._id)) {
-			return next({
-				status: 401,
-			});
-		}
+  try {
+    if (!req.user._id.equals(req.group.owner._id)) {
+      return next({
+        status: 401,
+      });
+    }
 
-		const newMember = await User.findOne({ phoneNumber: req.body.phoneNumber });
-
-		const findNumber = req.group.members.includes(newMember._id);
-
-		if (!findNumber) {
-			const updatedGroup = await Group.findByIdAndUpdate(
-				req.params.groupId,
-				{
-					$push: { members: newMember._id },
-				},
-				{ new: true, runValidators: true }
-			);
-			return res.json(updatedGroup);
-		} else {
-			next({ status: 500, message: "Member already exits in the group" });
-		}
-	} catch (error) {
-		next(error);
-	}
+    const updatedGroup = await Group.findByIdAndUpdate(
+      req.params.groupId,
+      {
+        $push: { members: req.body.members },
+      },
+      { new: true, runValidators: true }
+    );
+    return res.json(updatedGroup);
+  } catch (error) {
+    next(error);
+  }
 };
 
 exports.addMoviePoll = async (req, res, next) => {
@@ -151,26 +143,27 @@ exports.addChat = async (req, res, next) => {
 };
 
 exports.leaveGroup = async (req, res, next) => {
-	try {
-		const updatedMemberList = req.group.members.find(
-			(member) => member === req.user._id
-		);
+  try {
+    const updatedMemberList = req.group.members.find(
+      (member) => member === req.user._id
+    );
 
-		if (!updatedMemberList) {
-			next({
-				status: 404,
-				message: "User was not found!",
-			});
-		}
+    if (!updatedMemberList) {
+      next({
+        status: 404,
+        message: "User was not found!",
+      });
+    }
 
-		const updatedGroup = await Group.findByIdAndUpdate(
-			req.group._id,
-			{ $pull: { members: req.user._id } },
-			{ new: true, runValidators: true }
-		);
+    const updatedGroup = await Group.findByIdAndUpdate(
+      req.group._id,
+      { $pull: { members: req.user._id } },
+      { new: true, runValidators: true }
+    );
 
-		res.status(200).json(updatedGroup);
-	} catch {
-		console.log("");
-	}
+    res.status(200).json(updatedGroup);
+  } catch {
+    next(error);
+  }
+};
 };
