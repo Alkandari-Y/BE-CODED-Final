@@ -6,6 +6,15 @@ const PollSchema = Schema(
       type: String,
       required: true,
     },
+    overview: {
+      type: String,
+    },
+    vote_average: {
+      type: String,
+    },
+    release_date: {
+      type: String,
+    },
     owner: {
       type: Schema.Types.ObjectId,
       ref: "User",
