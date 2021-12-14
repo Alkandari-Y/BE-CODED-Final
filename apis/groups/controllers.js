@@ -164,10 +164,6 @@ exports.leaveGroup = async (req, res, next) => {
       (member) => member === req.user._id
     );
 
-    console.log("user id: ", req.user._id);
-
-    // console.log(updatedMemberList);
-
     if (!updatedMemberList) {
       next({
         status: 404,
@@ -180,8 +176,6 @@ exports.leaveGroup = async (req, res, next) => {
       { $pull: { members: req.user._id } },
       { new: true, runValidators: true }
     );
-
-    console.log(updatedGroup);
 
     res.status(200).json(updatedGroup);
   } catch {
