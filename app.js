@@ -95,7 +95,6 @@ io.on("connection", (socket) => {
   //TBD - delete-group
   socket.on("delete-group", (data) => {
     socket.broadcast.emit("recieve-deleted-group", data);
-    console.log("data deleted BE", data);
   });
 
   //edit-group

@@ -107,22 +107,14 @@ exports.addMembersToGroup = async (req, res, next) => {
       });
     }
 
-    const newMember = await User.findOne({ phoneNumber: req.body.phoneNumber });
-
-    const findNumber = req.group.members.includes(newMember._id);
-
-    if (!findNumber) {
-      const updatedGroup = await Group.findByIdAndUpdate(
-        req.params.groupId,
-        {
-          $push: { members: newMember._id },
-        },
-        { new: true, runValidators: true }
-      );
-      return res.json(updatedGroup);
-    } else {
-      next({ status: 500, message: "Member already exits in the group" });
-    }
+    const updatedGroup = await Group.findByIdAndUpdate(
+      req.params.groupId,
+      {
+        $push: { members: req.body.members },
+      },
+      { new: true, runValidators: true }
+    );
+    return res.json(updatedGroup);
   } catch (error) {
     next(error);
   }
@@ -164,10 +156,6 @@ exports.leaveGroup = async (req, res, next) => {
       (member) => member === req.user._id
     );
 
-    console.log("user id: ", req.user._id);
-
-    // console.log(updatedMemberList);
-
     if (!updatedMemberList) {
       next({
         status: 404,
@@ -181,10 +169,8 @@ exports.leaveGroup = async (req, res, next) => {
       { new: true, runValidators: true }
     );
 
-    console.log(updatedGroup);
-
     res.status(200).json(updatedGroup);
-  } catch {
-    console.log("");
+  } catch (error) {
+    next(error);
   }
 };
