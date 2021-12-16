@@ -31,7 +31,7 @@ const GroupSchema = Schema(
     ],
     image: {
       type: String,
-      default: "/media/defaultUserImage.jpg",
+      default: "/media/defaultGroupImage.jpg",
     },
   },
   { timestamps: true }
