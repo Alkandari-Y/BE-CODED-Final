@@ -53,30 +53,6 @@ io.on("connection", (socket) => {
   activeSockets.push(socket.id);
   console.log("User(s) Connected: ", activeSockets);
 
-  //Creating a list of user and merging/linking socket.id and user._id ---- CANCELED FUNCTION
-  // socket.on("authUser", (payload) => {
-  //   console.log(payload);
-  //   if (payload) {
-  //     const foundUser = users.find((user) => user._id === payload._id);
-  //     const userSocketExists = users.find(
-  //       (user) => socket.id === user.socketId
-  //     );
-  //     if (!foundUser && !userSocketExists) {
-  //       users.push({ _id: payload._id, socketId: socket.id, room: null });
-  //     } else if (foundUser && !userSocketExists) {
-  //       foundUser.socketId === socket.id;
-  //     } else if (!foundUser && userSocketExists) {
-  //       userSocketExists._id === payload._id;
-  //     }
-  //   }
-  //   console.log("current array of active sockets", users);
-  // });
-
-  //Leave this for uncommented for later (icebox)
-  // socket.on("join-group", (payload) => {
-  //   console.log("user joined group", socket.id);
-  // });
-
   //send group message
   socket.on("group-message", (payload) => {
     socket.broadcast.emit("new-message", payload);
