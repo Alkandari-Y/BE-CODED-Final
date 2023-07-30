@@ -44,7 +44,6 @@ const io = new Server(server, {
   },
 });
 
-// const users = [];
 const activeSockets = [];
 
 io.on("connection", (socket) => {
